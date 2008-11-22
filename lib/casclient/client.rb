@@ -186,10 +186,12 @@ module CASClient
         conn.get("#{uri.path}?#{uri.query}")
       end
       
-      
-      raise CASException, res.body unless res.kind_of? Net::HTTPSuccess
-      
-      ProxyGrantingTicket.new(res.body.strip, pgt_iou)
+      unless res.kind_of? Net::HTTPSuccess
+        log.debug(res.body)
+        nil
+      else
+        ProxyGrantingTicket.new(res.body.strip, pgt_iou)
+      end
     end
     
     def add_service_to_login_url(service_url)
