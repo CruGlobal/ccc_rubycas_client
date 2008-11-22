@@ -69,6 +69,9 @@ module CASClient
           @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
         end
         
+        @xml.elements.to_a('//cas:authenticationSuccess/cas:attributes/*').each do |el|
+          @extra_attributes.merge!(Hash.from_xml(el.to_s)) unless el.prefix == 'cas'
+        end
         # unserialize extra attributes
         @extra_attributes.each do |k, v|
           if v.blank?
