@@ -81,6 +81,11 @@ module CASClient
                     f = store_service_session_lookup(st, controller.request.session_options[:id] || controller.session.session_id)
                     log.debug("Wrote service session lookup file to #{f.inspect} with session id #{controller.request.session_options[:id] || controller.session.session_id.inspect}.")
                   end
+                  log.info("send to: #{controller.session[:send_to]}")
+                  if controller.session[:send_to]
+                    controller.redirect_to controller.session[:send_to]
+                    controller.session.delete :send_to
+                  end
                 end
               
                 # Store the ticket in the session to avoid re-validating the same service
@@ -318,6 +323,8 @@ module CASClient
             
             params = controller.params.dup
             params.delete(:ticket)
+            controller.session[:send_to] ||= controller.request.url
+            log.info("send to: #{controller.session[:send_to]}")
             service_url = controller.url_for(params)
             log.debug("Guessed service url: #{service_url.inspect}")
             return service_url
